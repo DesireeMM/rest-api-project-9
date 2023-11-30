@@ -113,9 +113,8 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
     if (course) {
         res.status(200).json(course);
     } else {
-        const error = new Error('Course not found.')
-        error.status = 404;
-        throw error;
+        const error = new Error('Course not found.');
+        res.status(404).json({error: error.message});
     }
 }));
 
@@ -128,7 +127,7 @@ router.post('/courses', authenticateUser, asyncHandler( async(req, res) => {
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const errors = error.errors.map(err => err.message);
-            res.status(400).json({errors})
+            res.status(400).json({errors});
         }
     }
 }));
@@ -144,8 +143,7 @@ router.put('/courses/:id', authenticateUser, async(req, res) => {
         res.status(403).end();
     } else {
         const error = new Error('Course not found.');
-        error.status = 404;
-        throw error;
+        res.status(404).json({error: error.message});
     }
 });
 
@@ -160,8 +158,7 @@ router.delete('/courses/:id', authenticateUser, async (req, res) => {
         res.status(403).end();
     } else {
         const error = new Error('Course not found.');
-        error.status = 404;
-        throw error;
+        res.status(404).json({error: error.message});
     }
 });
 

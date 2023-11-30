@@ -27,7 +27,7 @@ async function authenticateUser(req, res, next) {
         if (user) {
             const authenticated = bcrypt.compareSync(credentials.pass, user.password);
             if (authenticated) {
-                console.log(`Authentication successful for ${user.firstName}`);
+                console.log(`Authentication successful for ${user.firstName} ${user.lastName}`);
                 req.currentUser = user;
             } else {
                 message = `Authentication failure for user ${user.firstName} ${user.lastName}`;

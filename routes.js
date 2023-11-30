@@ -62,7 +62,16 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
 // Route that returns all courses
 router.get('/courses', asyncHandler(async (req, res) => {
     const courses = await Course.findAll({
-        attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded']
+        attributes: {
+            exclude: ['userId', 'createdAt', 'updatedAt']
+        },
+        include: [
+            {
+                model: User,
+                as: 'owner',
+                attributes: ['id', 'firstName', 'lastName', 'emailAddress']
+            }
+        ]
     });
     res.status(200).json(courses);
 }));
@@ -89,7 +98,18 @@ router.post('/users', asyncHandler(async(req, res) => {
 
 // Route to return a specific course
 router.get('/courses/:id', asyncHandler( async(req, res) => {
-    const course = await Course.findByPk(req.params.id);
+    const course = await Course.findByPk(req.params.id, {
+        attributes: {
+            exclude: ['userId', 'createdAt', 'updatedAt']
+        },
+        include: [
+            {
+                model: User,
+                as: 'owner',
+                attributes: ['id', 'firstName', 'lastName', 'emailAddress']
+            }
+        ]
+    });
     if (course) {
         res.status(200).json(course);
     } else {

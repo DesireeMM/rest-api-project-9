@@ -47,12 +47,16 @@ async function authenticateUser(req, res, next) {
     }
 };
 
-// Route that returns all users
+// Route that returns the authenticated user
 router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
-    const users = await User.findAll({
-        attributes: ['id', 'firstName', 'lastName', 'emailAddress']
-    });
-    res.status(200).json(users);
+    const user = req.currentUser;
+    const userToDisplay = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        emailAddress: user.emailAddress
+    }
+    res.status(200).json(userToDisplay);
 }));
 
 // Route that returns all courses
@@ -71,7 +75,7 @@ router.post('/users', asyncHandler(async(req, res) => {
         if (password) {
             user.password = bcrypt.hashSync(password, 10);
         }
-        await User.create(req.body);
+        await User.create(user);
         res.status(201).location('/').end();
     } catch (error) {
         if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError') {
